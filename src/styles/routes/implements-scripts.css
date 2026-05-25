@@ -1,0 +1,12 @@
+/* Estilos de prueba para la ruta implementsScripts */
+body[data-route-id="implementsScripts"] #layoutMain {
+    background: linear-gradient(180deg, #eaf3ff 0%, #ffffff 100%);
+    border: 1px solid #86aef2;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+body[data-route-id="implementsScripts"] #layoutMain h1,
+body[data-route-id="implementsScripts"] #layoutMain h2 {
+    color: #1f4f9b;
+}

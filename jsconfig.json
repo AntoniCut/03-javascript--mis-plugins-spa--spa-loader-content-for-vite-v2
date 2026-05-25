@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "noImplicitAny": true,
+        "strict": true,
+        "module": "ESNext",
+        "target": "ES2022",
+        "ignoreDeprecations": "6.0",
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": ["*"],
+            "@app/*": ["app/*"],
+            "@assets/*": ["assets/*"],
+            "@components/*": ["components/*"],
+            "@config/*": ["config/*"],
+            "@pages/*": ["pages/*"],
+            "@plugins/*": ["plugins/*"],
+            "@routes/*": ["routes/*"],
+            "@scripts/*": ["scripts/*"],
+            "@spa/*": ["spa/*"],
+            "@styles/*": ["styles/*"],
+            "@types/*": ["types/*"],
+            "@utils/*": ["utils/*"]
+        },
+        "lib": [
+            "ES2022",
+            "DOM"
+        ],
+        "typeRoots": ["./src/types"],
+        "moduleResolution": "bundler"
+    },
+    "include": [
+        "global.d.ts",
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
