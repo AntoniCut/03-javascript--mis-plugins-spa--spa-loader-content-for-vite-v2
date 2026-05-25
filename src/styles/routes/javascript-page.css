@@ -1,0 +1,22 @@
+/* Estilos para la ruta JavaScript Page */
+body[data-route-id="javascriptPage"] #layoutMain {
+    background: linear-gradient(180deg, #e6ffe6 0%, #ffffff 100%);
+    border: 1px solid #7af57a;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(122, 245, 122, 0.2);
+}
+
+body[data-route-id="javascriptPage"] #layoutMain h2 {
+    color: #008c00;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #7af57a;
+}
+
+body[data-route-id="javascriptPage"] #layoutMain p {
+    color: #1b5a1b;
+    line-height: 1.7;
+    font-size: 1rem;
+}

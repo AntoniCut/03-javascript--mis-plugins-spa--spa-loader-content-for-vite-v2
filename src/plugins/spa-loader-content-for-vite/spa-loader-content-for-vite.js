@@ -10,20 +10,22 @@
 
 /** @typedef {import('../../types/config-option-spa-types.js').ConfigOptionsSPA} ConfigOptionsSPA */
 /** @typedef {import('../../types/route-types.js').Route} Route */
+/** @typedef {import('../../types/route-manifest-types.js').RouteManifest} RouteManifest */
 
 
 /**
  * -------------------------------------
  * ----- spaLoaderContentForVite() -----
  * -------------------------------------
- * @version  1.0.0
+ * @version  2.0.0
  * @author Antonio Francisco Cutillas García
  * 
  * - Plugin SPA para cargar contenido dinámico en layouts definidos.
+ * - Soporta dos modos: eager loading (routes array) y lazy loading (routeManifest + routeModules).
+ * - Usa `import.meta.glob` de Vite para lazy loading compatible con producción.
  * - Respeta transiciones de View Transition si el navegador lo soporta.
  * - Carga dinámicamente componentes JS en los layouts definidos
  * - Solo soporta scripts de tipo función directa
- * - Respeta transiciones de View Transition si el navegador lo soporta
  * - Maneja estilos dinámicos y actualización de history
  * 
  * @param {Partial<ConfigOptionsSPA>} options - Opciones de configuración del plugin
@@ -38,6 +40,8 @@ export const spaLoaderContentForVite = (options = {}) => {
      */
     const settings = {
         routes: [],
+        routeManifest: [],
+        routeModules: {},
         base: '',
         layoutHeader: '#layoutHeader',
         layoutNavbar: '#layoutNavbar',
@@ -47,7 +51,6 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-
     /**
      * - Set para evitar recargar varias veces el mismo stylesheet
      * @type {Set<string>}
@@ -55,6 +58,19 @@ export const spaLoaderContentForVite = (options = {}) => {
 
     const _loadedStyles = new Set();
 
+
+    /**
+     * - Cache de módulos de ruta ya importados dinámicamente (solo para lazy loading)
+     * @type {Map<string, Route>}
+     */
+    const routeCache = new Map();
+
+
+    /**
+     * - Indica si se usa el modo lazy loading con manifest
+     * @type {boolean}
+     */
+    const useLazyLoading = Array.isArray(settings.routeManifest) && settings.routeManifest.length > 0 && typeof settings.routeModules === 'object' && Object.keys(settings.routeModules).length > 0;
 
 
     /**
@@ -71,7 +87,6 @@ export const spaLoaderContentForVite = (options = {}) => {
             normalizedPath = '/';
         }
 
-        // Evita barras duplicadas consecutivas en los paths.
         normalizedPath = normalizedPath.replace(/\/+/g, '/');
 
         if (!normalizedPath.startsWith('/')) {
@@ -111,7 +126,6 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-    // Normaliza `base` y todos los `path` de `routes` dentro del plugin.
     settings.base = normalizeBasePath(settings.base);
     settings.routes = (Array.isArray(settings.routes) ? settings.routes : []).map(route => ({
         ...route,
@@ -148,7 +162,6 @@ export const spaLoaderContentForVite = (options = {}) => {
 
     /**
      * - Construye la URL de navegador para una ruta.
-     * - Mantiene slash final solo para la home cuando existe `base` (requisito de Vite en dev).
      * @param {string} routePath
      * @returns {string}
      */
@@ -168,21 +181,129 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
+    /**
+     * --------------------------------------
+     * -----  Lazy Loading Functions  -----
+     * --------------------------------------
+     */
+
+
+    /**
+     * - Busca una entrada en el manifest por path normalizado.
+     * @param {string} rawPathname - Pathname sin normalizar
+     * @returns {RouteManifest|undefined}
+     */
+    const findManifestEntryByPath = (rawPathname = '/') => {
+
+        const normalized = stripBaseFromPath(rawPathname);
+
+        return settings.routeManifest?.find(entry => normalizePath(entry.path) === normalized);
+
+    };
+
+
+    /**
+     * - Busca una entrada en el manifest por id.
+     * @param {string} id - Identificador de la ruta
+     * @returns {RouteManifest|undefined}
+     */
+    const findManifestEntryById = (id) => {
+
+        return settings.routeManifest?.find(entry => entry.id === id);
+
+    };
+
+
+    /**
+     * - Importa dinámicamente un módulo de ruta usando el glob map de Vite.
+     * @param {string} file - Nombre del archivo de ruta sin extensión
+     * @returns {Promise<Route|undefined>}
+     */
+    const loadRouteModule = async (file) => {
+
+        if (routeCache.has(file)) {
+            return routeCache.get(file);
+        }
+
+        try {
+
+            const globKey = `./${file}.js`;
+
+            const importFn = settings.routeModules[globKey];
+
+            if (!importFn) {
+                console.error(`❌ Módulo de ruta no encontrado en glob: ${globKey}`);
+                return undefined;
+            }
+
+            const mod = await importFn();
+
+            const route = Object.values(mod)[0];
+
+            if (route) {
+                routeCache.set(file, route);
+            }
+
+            console.log(`📦 Ruta cargada dinámicamente: ${file}`);
+
+            return route;
+
+        } catch (e) {
+            console.error(`❌ Error importando módulo de ruta: ${file}`, e);
+            return undefined;
+        }
+
+    };
+
+
+    /**
+     * - Obtiene la entrada 404 del manifest.
+     * @returns {RouteManifest|undefined}
+     */
+    const findNotFoundRoute = () => {
+
+        return settings.routeManifest?.find(entry =>
+            entry?.id === '404NotFoundPage' ||
+            normalizePath(entry?.path) === '404' ||
+            normalizePath(entry?.path) === '404-not-found' ||
+            /404/i.test(String(entry?.id || ''))
+        );
+
+    };
+
+
+    /**
+     * - Carga la ruta 404 dinámicamente desde el manifest.
+     * @param {'init'|'click'|'popstate'} source - Origen del intento de carga
+     */
+    const loadNotFoundRoute = async (source) => {
+
+        const entry404 = findNotFoundRoute();
+
+        if (!entry404) {
+            console.error(`No existe ruta 404 configurada (source: ${source}).`);
+            return;
+        }
+
+        const route = await loadRouteModule(entry404.file);
+
+        if (route) {
+            await loadContent(route);
+        }
+
+    };
+
 
     /**
      * ----------------------------------
      * -----  Actualiza el favicon  -----
      * ----------------------------------
-     * 
-     * `updateFavicon`
-     * - Actualiza el favicon de la página
      * @param {string} favicon
      */
 
     const updateFavicon = (favicon) => {
         if (!favicon) return;
 
-        /** @type {HTMLLinkElement|null} */
         let link = document.querySelector('link[rel~="icon"]');
 
         if (!link) {
@@ -196,14 +317,10 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-
     /**
      * -----------------------------------
      * -----  Carga hoja de estilos  -----
      * -----------------------------------
-     * `loadStylesheet`
-     * - Carga una hoja de estilos en el documento
-     * - Retorna una promesa que resuelve cuando el link ha sido añadido (no espera a que la hoja cargue)
      * @param {string} href
      * @returns {Promise<void>}
      */
@@ -222,16 +339,10 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-
     /**
      * ----------------------------------
      * -----  Procesa un script  -------
      * ----------------------------------
-     * 
-     * `processScriptEntry`
-     * 
-     * - Procesa un script de la lista
-     * - Solo ejecuta funciones directas (sync o async)
      * @param {Function} scriptEntry
      * @returns {Promise<void>}
      */
@@ -250,16 +361,10 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-
     /**
      * --------------------------------------
      * -----  Procesa lista de scripts  -----
      * --------------------------------------
-     * 
-     * `processScriptsList`
-     * 
-     * - Procesa una lista de scripts en orden
-     * - Ejecuta funciones directas respetando orden y await si devuelven Promise
      * @param {Function[]} scripts
      * @returns {Promise<void>}
      */
@@ -274,15 +379,10 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-
     /**
      * --------------------------------------
      * -----  Renderiza un componente  -----
      * --------------------------------------
-     * 
-     * `renderComponent`
-     * 
-     * - Renderiza un componente en un selector dado
      * @param {Route} route
      * @param {string} selector
      * @param {(() => void)|undefined} Component
@@ -298,10 +398,8 @@ export const spaLoaderContentForVite = (options = {}) => {
 
             try {
 
-                /** @type {any} - Renderiza el componente */
                 const el = Component();
 
-                /** @type {HTMLHeadingElement|null} - Actualiza el título del header si existe y la ruta define headerTitle */
                 const $headerTitle = document.querySelector('#headerTitle');
 
                 if ($headerTitle && route.headerTitle) {
@@ -322,13 +420,8 @@ export const spaLoaderContentForVite = (options = {}) => {
      * --------------------------------------
      * -----  Carga contenido DOM  ---------
      * --------------------------------------
-     * 
-     * `loadContentDOM`
-     * 
-     * - Inserta los componentes de la ruta en los contenedores del layout
-     * - Llama a un callback opcional después de insertar el DOM
      * @param {Route} route
-     * @param {Function} [afterDOMInserted] - Callback opcional
+     * @param {Function} [afterDOMInserted]
      */
 
     const loadContentDOM = (route, afterDOMInserted) => {
@@ -345,18 +438,12 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-
     /**
      * --------------------------------------
      * -----  Carga el contenido  ---------
      * --------------------------------------
-     * 
-     * `loadContent`
-     * 
-     * - Función principal que carga el contenido de una ruta
-     * - Scripts se ejecutan justo después de insertar el DOM
      * @param {Route} route
-     * @param {boolean} [pushHistory=true] - Si true, añade entrada al history
+     * @param {boolean} [pushHistory=true]
      * @returns {Promise<void>}
      */
 
@@ -368,34 +455,25 @@ export const spaLoaderContentForVite = (options = {}) => {
         const runScripts = async () => {
             
             if (route.scripts) {
-                
                 try { 
                     await processScriptsList(route.scripts); 
                 }
-                
                 catch (e) { 
                     console.error('❌ Error ejecutando scripts:', e); 
                 }
-
             }
-
         };
 
 
-        //  ----- 1 - DOM update con callback  -----
         if (document.startViewTransition) 
             document.startViewTransition(() => loadContentDOM(route, () => runScripts()));
-        
         else 
             loadContentDOM(route, () => runScripts());
         
 
-        //  ----- 2 - Title, favicon, styles  -----
-        
         document.title = route.pageTitle || 'Página sin título';
         updateFavicon(route.favicon);
 
-        // Permite estilos por ruta usando selectores de tipo body[data-route-id="..."]
         document.body.setAttribute('data-route-id', route.id || '');
 
         if (route.styles) {
@@ -403,129 +481,188 @@ export const spaLoaderContentForVite = (options = {}) => {
             catch (e) { console.error(e); }
         }
 
-        //  ----- 3 - Actualizar URL  -----
         if (pushHistory) {
-            
-            /**
-             * - Nueva URL canónica de navegador
-             * @type {string}
-             */
             const newUrl = getRouteBrowserPath(route.path);
-            
-            /**
-             * - Path actual
-             * @type {string}
-             */
             const currentPath = window.location.pathname;
             
             if (currentPath !== newUrl) {
                 history.pushState({ path: newUrl }, '', newUrl);
             }
-
         }
 
     };
 
 
-
     /**
      * -----------------------------------
      * -----  Configura eventos SPA  -----
+     * -----  (modo eager loading)  -----
      * -----------------------------------
-     * 
-     * `setupEventListeners`
-     * 
-     * - Configura eventos de navegación SPA
      */
     const setupEventListeners = () => {
 
-
-        //  -----  Maneja clicks en enlaces SPA  -----
         document.addEventListener('click', (e) => {
 
             if (!(e.target instanceof Element))
                 return;
 
-            /**@type {HTMLAnchorElement|null} - Busca el enlace más cercano con data-id */
             const link = e.target.closest('a[data-id]');
 
             if (!link)
                 return;
 
-            //  -----  Previene comportamiento por defecto  -----
             e.preventDefault();
 
-
-            /** @type {Route|undefined} - Ruta asociada al enlace*/
             const route = settings.routes.find(r => r.id === link.dataset.id);
             
             if (route) 
-                loadContent(route, true)
-                    .catch(console.error);
+                loadContent(route, true).catch(console.error);
 
         });
 
 
-        //  -----  Maneja navegación con back/forward  -----
         window.addEventListener('popstate', (e) => {
             
-            /** @type {string} - Path normalizado de la entrada en el history */
             const path = stripBaseFromPath(e.state?.path || window.location.pathname);
-            
-            /** @type {Route|undefined} - Ruta asociada al path */
             const route = settings.routes.find(r => normalizePath(r.path) === path);
             
             if (route) 
-                loadContent(route, false)
-                    .catch(console.error);
+                loadContent(route, false).catch(console.error);
         });
 
     };
 
 
+    /**
+     * -----------------------------------
+     * -----  Configura eventos SPA  -----
+     * -----  (modo lazy loading)  -----
+     * -----------------------------------
+     */
+    const setupLazyEventListeners = () => {
+
+        document.addEventListener('click', (e) => {
+
+            if (!(e.target instanceof Element))
+                return;
+
+            const link = e.target.closest('a[data-id]');
+
+            if (!link)
+                return;
+
+            e.preventDefault();
+
+            const entry = settings.routeManifest?.find(r => r.id === link.dataset.id);
+            
+            if (entry) {
+                loadRouteModule(entry.file)
+                    .then(route => {
+                        if (route) {
+                            return loadContent(route, true);
+                        }
+                    })
+                    .catch(console.error);
+            }
+
+        });
+
+
+        window.addEventListener('popstate', (e) => {
+            
+            const path = stripBaseFromPath(e.state?.path || window.location.pathname);
+            const entry = settings.routeManifest?.find(r => normalizePath(r.path) === path);
+            
+            if (entry) {
+                loadRouteModule(entry.file)
+                    .then(route => {
+                        if (route) {
+                            return loadContent(route, false);
+                        }
+                    })
+                    .catch(console.error);
+            }
+        });
+
+    };
+
 
     /**
      * -----------------------------------
      * -----  Inicializa el plugin  -----
+     * -----  (modo eager loading)  -----
      * -----------------------------------
-     * 
-     * `init`
-     * 
-     * - Inicializa el plugin SPA
-     * - Carga la ruta inicial y configura listeners
      */
 
     const init = () => {
         
-        
-        console.warn('✅ Plugin SPA cargado correctamente (solo funciones directas)');
+        console.warn('✅ Plugin SPA cargado correctamente (eager loading)');
 
-        /** @type {string} * - Path inicial normalizado */
         const initialPath = stripBaseFromPath(window.location.pathname);
-        
-        /** @type {Route|undefined} * - Ruta inicial a cargar */
         const initialRoute = settings.routes.find(r => normalizePath(r.path) === initialPath);
 
-        //  -----  Carga la ruta inicial sin añadir al history  -----
         if (initialRoute) 
-            loadContent(initialRoute, false)
-                .catch(console.error);
+            loadContent(initialRoute, false).catch(console.error);
         
-        /** @type {string} - URL canónica inicial para el history */
         const canonicalInitialUrl = initialRoute
             ? getRouteBrowserPath(initialRoute.path)
             : window.location.pathname;
 
         history.replaceState({ path: canonicalInitialUrl }, '', canonicalInitialUrl);
 
-        //  -----  Configura listeners de navegación  -----
         setupEventListeners();
 
     };
 
 
-    //  -----  Inicialización automática  -----
-    init();
+    /**
+     * -----------------------------------
+     * -----  Inicializa el plugin  -----
+     * -----  (modo lazy loading)  -----
+     * -----------------------------------
+     */
+
+    const initLazy = async () => {
+        
+        console.warn('✅ Plugin SPA cargado correctamente (lazy loading con import.meta.glob)');
+
+        const initialEntry = findManifestEntryByPath(window.location.pathname);
+
+        if (initialEntry) {
+            const route = await loadRouteModule(initialEntry.file);
+
+            if (route) {
+                await loadContent(route, false);
+                
+                const canonicalInitialUrl = getRouteBrowserPath(route.path);
+                history.replaceState(
+                    { id: route.id, path: canonicalInitialUrl, routeFile: initialEntry.file }, 
+                    '', 
+                    canonicalInitialUrl
+                );
+            } else {
+                await loadNotFoundRoute('init');
+            }
+        } else {
+            await loadNotFoundRoute('init');
+            
+            history.replaceState(
+                { id: null, path: window.location.pathname },
+                '',
+                window.location.pathname
+            );
+        }
+
+        setupLazyEventListeners();
+
+    };
+
+
+    if (useLazyLoading) {
+        initLazy();
+    } else {
+        init();
+    }
 
 
 };

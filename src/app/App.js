@@ -1,8 +1,7 @@
 /*
-    -------------------------------------------------
-    ----------  javascript.antonydev.tech  ----------
-    ----------  /src/spa/App.js  --------------------
-    -------------------------------------------------
+    *  -----------------------------------------  *
+    *  -----  App.js  --  /src/spa/App.js  -----  *
+    *  -----------------------------------------  *
 */
 
 
@@ -32,7 +31,7 @@ export const App = ($app) => {
         --------------------
     */
 
-    /**@type {HTMLHeaderElement} - `-----  Header de la aplicación  -----` */
+    /** @type {HTMLHeaderElement} - `-----  Header de la aplicación  -----` */
     const $layoutHeader = document.createElement('header');
 
     $layoutHeader.id = 'layoutHeader';
@@ -45,7 +44,7 @@ export const App = ($app) => {
         --------------------
     */
 
-        /** @type {HTMLNavElement} - `-----  Navbar de la aplicación  -----`*/
+    /** @type {HTMLNavElement} - `-----  Navbar de la aplicación  -----`*/
     const $layoutNavbar = document.createElement('nav');
 
     $layoutNavbar.id = 'layoutNavbar';
@@ -58,7 +57,7 @@ export const App = ($app) => {
         --------------------
     */
 
-    /**@type {HTMLMainElement} - `-----  Main de la aplicación  -----` */
+    /** @type {HTMLMainElement} - `-----  Main de la aplicación  -----` */
     const $layoutMain = document.createElement('main');
 
     $layoutMain.id = 'layoutMain';

@@ -6,15 +6,15 @@
 */
 
 
-
 /**
  * @typedef {import('../types/route-types.js').Route} Route
+ * @typedef {import('../types/route-manifest-types.js').RouteManifest} RouteManifest
  * @typedef {import('../types/config-option-spa-types.js').ConfigOptionsSPA} ConfigOptionsSPA
  */
 
 
-import { routesJavaScriptAntonydevTech } from "@routes/routes-javascript-antonydev-tech.js";
-import { routesImplementsScripts } from "@/routes/routes-implements-scripts.js";
+import { routeManifest } from "@routes/route-manifest.js";
+import { routeModules } from "@routes/route-modules.js";
 
 import { base } from "@/config/base.js";
 import { spaLoaderContentForVite } from "@plugins/spa-loader-content-for-vite/spa-loader-content-for-vite.js";
@@ -24,6 +24,7 @@ import { spaLoaderContentForVite } from "@plugins/spa-loader-content-for-vite/sp
 
 /**
  * - `Función principal` que `inicializa` la `SPA` utilizando el plugin `spaLoaderContentForVite`
+ * - Usa lazy loading con manifiesto de rutas y import.meta.glob de Vite
  */
 
 export const spa = () => {
@@ -31,43 +32,22 @@ export const spa = () => {
     
     //  ----------  Documento Cargado  ----------
     console.log('\n');
-    console.warn('-----  content-loader-spa.js  -----');
+    console.warn('-----  spa.js - Cargado (lazy loading con import.meta.glob)  -----');
     console.log('\n')
        
     
-    //  ----------  Arrays con la informacion del contenido a cargar de las rutas del proyecto ----------
-    
-    /**
-     * - `Todas las rutas del proyecto`
-     * @type {Route[]}
-     */
-    
-    const allRoutes = [
-        
-        ...routesJavaScriptAntonydevTech,
-        ...routesImplementsScripts,
+    //  ----------  Opciones que le pasamos al plugin (lazy loading con manifest)  ----------
 
-    ];
+    /** @type {import("../types/config-option-spa-types.js").ConfigOptionsSPA} - `-----  Configuración para el plugin spa-loader-content-for-vite.js  -----` */
 
-  
-    //  ----------  Opciones que le pasamos al plugins  ----------
-
-    /**
-     * - `Opciones de configuración para la SPA`
-     * @type {ConfigOptionsSPA}
-     */
-
-    const configOptions = {
-        routes: allRoutes,
+    const configOptionsSpa = {
+        routeManifest,
+        routeModules,
         base,
-        layoutHeader: '#layoutHeader',
-        layoutNavbar: '#layoutNavbar',
-        layoutMain: '#layoutMain',
-        layoutFooter: '#layoutFooter',
     }
 
 
-    //  ----------  Invocamos el Plugins  --  content-loader-spa.js  ----------
-    spaLoaderContentForVite(configOptions);
+    //  ----------  Invocamos el Plugins  --  spa-loader-content-for-vite.js  ----------
+    spaLoaderContentForVite(configOptionsSpa);
 
 }

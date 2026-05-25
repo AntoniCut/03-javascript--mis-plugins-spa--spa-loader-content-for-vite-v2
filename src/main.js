@@ -1,8 +1,8 @@
 /*
-    -------------------------------------------------
-    ----------  javascript.antonydev.tech  ----------
-    ----------  /src/main.js  ----------------------
-    -------------------------------------------------
+    
+    *  ---------------------------------------  *
+    *  -----  main.js  --  /src/main.js  -----  *
+    *  ---------------------------------------  *
 */
 
 
@@ -11,7 +11,7 @@ import '@styles/style.css';
 import { App } from "@app/App.js";
 
 
-/**@type {HTMLDivElement|null} * - `Elemento principal de la aplicación`. Selecciona el elemento con id `app` del DOM */
+/** @type {HTMLDivElement|null} - `Elemento principal de la aplicación`. Selecciona el elemento con id `app` del DOM */
 const $app = document.querySelector('#app');
 
 

@@ -1,0 +1,22 @@
+/* Estilos para la ruta jQuery UI Page */
+body[data-route-id="jqueryUiPage"] #layoutMain {
+    background: linear-gradient(180deg, #f0e6ff 0%, #ffffff 100%);
+    border: 1px solid #6b3fa0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(107, 63, 160, 0.2);
+}
+
+body[data-route-id="jqueryUiPage"] #layoutMain h2 {
+    color: #6b3fa0;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #6b3fa0;
+}
+
+body[data-route-id="jqueryUiPage"] #layoutMain p {
+    color: #3a1b5a;
+    line-height: 1.7;
+    font-size: 1rem;
+}

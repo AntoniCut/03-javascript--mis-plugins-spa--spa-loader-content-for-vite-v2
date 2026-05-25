@@ -28,8 +28,13 @@ export const Navbar = () => {
 
         <div class="navbar__container">
             <a href="#" data-id="home"> Home </a> <br> <br>
-            <a href="#" data-id="implementsScripts"> Implementación de Scripts </a> <br> <br>
-            <a href="#" data-id="cursoJavascriptJonMircha"> Curso JavaScript Jon Mircha </a>
+            <a href="#" data-id="htmlPage"> HTML Page </a> <br> <br>
+            <a href="#" data-id="cssPage"> CSS Page </a> <br> <br>
+            <a href="#" data-id="javascriptPage"> JavaScript Page </a> <br> <br>
+            <a href="#" data-id="jqueryPage"> jQuery Page </a> <br> <br>
+            <a href="#" data-id="jqueryUiPage"> jQuery UI Page </a> <br> <br>
+            <a href="#" data-id="cursoJavascriptJonMircha"> Curso JavaScript Jon Mircha </a> <br> <br>
+            <a href="#" data-id="implementsScripts"> Implementación de Scripts </a>
         </div>
                 
     `;
