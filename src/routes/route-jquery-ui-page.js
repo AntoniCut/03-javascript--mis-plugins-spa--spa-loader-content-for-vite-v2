@@ -24,10 +24,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de jQuery UI Page  -----` */
 export const routeJqueryUiPage = {
     id: 'jqueryUiPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(jqueryUiPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(jqueryUiPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/jquery-ui-icon.svg`,
     pageTitle: 'jQuery UI — Interactions, Widgets & Effects',
     path: 'jquery-ui-page',

@@ -450,23 +450,63 @@ export const spaLoaderContentForVite = (options = {}) => {
      * -----  `loadStylesheetsByPage(href)`  -----
      * ---------------------------------------------
      * - Swap de estilos por página (marca data-page-style).
+     * - Inserta el nuevo link primero y solo entonces elimina los anteriores
+     *   (evita FOUC). Resuelve cuando el CSS está listo (o de inmediato si
+     *   ya estaba activo / no hay href).
      * - Sin cache-bust: las URLs de Vite ya llevan hash.
      * @param {string|null|undefined} href
+     * @returns {Promise<void>}
      */
     const loadStylesheetsByPage = (href) => {
 
-        document.querySelectorAll('link[data-page-style="true"]').forEach(l => l.remove());
+        /** @type {HTMLLinkElement[]} */
+        const oldLinks = Array.from(
+            /** @type {NodeListOf<HTMLLinkElement>} */
+            (document.querySelectorAll('link[data-page-style="true"]'))
+        );
 
         if (!href) {
-            return;
+            oldLinks.forEach(l => l.remove());
+            return Promise.resolve();
         }
 
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        link.dataset.pageStyle = 'true';
-        document.head.appendChild(link);
+        const absoluteHref = new URL(href, document.baseURI).href;
+        const alreadyActive = oldLinks.find(l => l.href.split('?')[0] === absoluteHref.split('?')[0]);
 
+        if (alreadyActive && oldLinks.length === 1) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            link.dataset.pageStyle = 'true';
+
+            let settled = false;
+            const finish = () => {
+                if (settled) {
+                    return;
+                }
+                settled = true;
+                oldLinks.forEach(l => {
+                    if (l !== link) {
+                        l.remove();
+                    }
+                });
+                resolve();
+            };
+
+            link.onload = finish;
+            link.onerror = finish;
+            document.head.appendChild(link);
+
+            // Hojas ya en caché: algunos navegadores no disparan onload
+            if (link.sheet) {
+                finish();
+            }
+        });
     };
 
 
@@ -514,30 +554,41 @@ export const spaLoaderContentForVite = (options = {}) => {
      * --------------------------------------
      * -----  Renderiza un componente  -----
      * --------------------------------------
-     * @param {Route} route
      * @param {string} selector
-     * @param {(() => void)|undefined} Component
+     * @param {(() => (void|Node|null|undefined))|undefined} Component
      */
 
-    const renderComponent = (route, selector, Component) => {
+    const renderComponent = (selector, Component) => {
 
         const container = document.querySelector(selector);
 
-        if (container && typeof Component === 'function') {
+        if (!(container instanceof HTMLElement)) {
+            console.warn(`⚠️ Contenedor no encontrado para selector: ${selector} — se omite.`);
+            return;
+        }
 
+        if (typeof Component !== 'function') {
+
+            console.warn(`⏭️ Componente en "${selector}" ignorado (factory undefined). Ocultando contenedor.`);
+            container.style.display = 'none';
             container.innerHTML = '';
+            return;
+        }
 
-            try {
+        container.style.display = '';
 
-                const el = Component();
+        try {
 
-                if (el) {
-                    container.appendChild(el);
-                }
+            const el = Component();
 
-            } catch (e) {
-                console.error(`❌ Error renderizando componente en ${selector}:`, e);
+            // Factory in-place (void) o Node para appendChild
+            if (el instanceof Node) {
+                container.innerHTML = '';
+                container.appendChild(el);
             }
+
+        } catch (e) {
+            console.error(`❌ Error renderizando componente en ${selector}:`, e);
         }
     };
 
@@ -546,6 +597,8 @@ export const spaLoaderContentForVite = (options = {}) => {
      * --------------------------------------
      * -----  Carga contenido DOM  ---------
      * --------------------------------------
+     * Itera `route.components`: cada clave es un slot de layout
+     * (`layoutHeader`, `layoutNavbar`, …) cuyo selector está en `settings`.
      * @param {Route} route
      */
 
@@ -555,10 +608,24 @@ export const spaLoaderContentForVite = (options = {}) => {
             throw new Error('loadContentDOM: route inválida');
         }
 
-        renderComponent(route, settings.layoutHeader, route.LayoutHeaderComponent);
-        renderComponent(route, settings.layoutNavbar, route.LayoutNavbarComponent);
-        renderComponent(route, settings.layoutMain, route.LayoutMainComponent);
-        renderComponent(route, settings.layoutFooter, route.LayoutFooterComponent);
+        const { components } = route;
+
+        if (!components || Object.keys(components).length === 0) {
+            console.warn(`La ruta '${route.id}' no contiene 'components'`);
+            return;
+        }
+
+        for (const [slot, Component] of Object.entries(components)) {
+
+            const selector = /** @type {Record<string, string|undefined>} */ (settings)[slot];
+
+            if (!selector) {
+                console.warn(`⚠️ Slot desconocido "${slot}" en ruta '${route.id}' — se omite.`);
+                continue;
+            }
+
+            renderComponent(selector, Component);
+        }
     };
 
 
@@ -582,6 +649,55 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * View Transition saltada (navegación rápida / pestaña oculta) → AbortError esperado.
+     * @param {unknown} error
+     * @returns {boolean}
+     */
+    const isViewTransitionAbort = (error) => {
+        return Boolean(
+            error &&
+            typeof error === 'object' &&
+            'name' in error &&
+            /** @type {{ name?: string }} */ (error).name === 'AbortError'
+        );
+    };
+
+
+    /**
+     * Ejecuta el paint con View Transition si está disponible.
+     * Ignora AbortError cuando la transición se salta.
+     * @param {() => void} paint
+     * @returns {Promise<void>}
+     */
+    const runPaintTransition = async (paint) => {
+
+        /** @type {Document & { startViewTransition?: (cb: () => void) => ViewTransition }} */
+        const doc = document;
+        const startVT = doc.startViewTransition;
+
+        if (typeof startVT !== 'function') {
+            paint();
+            return;
+        }
+
+        try {
+
+            const viewTransition = startVT.call(doc, paint);
+            await (viewTransition.updateCallbackDone || Promise.resolve());
+
+        } catch (error) {
+
+            if (isViewTransitionAbort(error)) {
+                return;
+            }
+
+            // startViewTransition falló: paint directo
+            paint();
+        }
+    };
+
+
+    /**
      * --------------------------------------
      * -----  Carga el contenido  ---------
      * --------------------------------------
@@ -589,7 +705,6 @@ export const spaLoaderContentForVite = (options = {}) => {
      * @param {boolean} [pushHistory=true]
      * @returns {Promise<void>}
      */
-
     const loadContent = async (route, pushHistory = true) => {
 
         if (!route) {
@@ -598,30 +713,26 @@ export const spaLoaderContentForVite = (options = {}) => {
 
         try {
 
-            /** @type {Promise<void>} */
-            let domPromise;
-
-            if (document.startViewTransition) {
-                const viewTransition = document.startViewTransition(() => {
-                    loadContentDOM(route);
-                });
-                domPromise = viewTransition?.finished || Promise.resolve();
-            } else {
-                loadContentDOM(route);
-                domPromise = Promise.resolve();
-            }
-
-            await domPromise;
-
+            // Title + favicon al instante (no esperan al paint ni a la animación)
             document.title = route.pageTitle || 'Página sin título';
             updateFavicon(route.favicon);
-            document.body.setAttribute('data-route-id', route.id || '');
 
-            if (route.headerTitle) {
-                addTitleHeaderFooter(route.headerTitle);
-            }
+            // Arranca el fetch de CSS en paralelo con el paint del DOM
+            const stylesReady = loadStylesheetsByPage(route.styles);
 
-            loadStylesheetsByPage(route.styles);
+            /**
+             * Paint: DOM + títulos de layout. Los estilos ya van en paralelo.
+             * @returns {void}
+             */
+            const paint = () => {
+                loadContentDOM(route);
+                document.body.setAttribute('data-route-id', route.id || '');
+                if (route.headerTitle) {
+                    addTitleHeaderFooter(route.headerTitle);
+                }
+            };
+
+            await Promise.all([runPaintTransition(paint), stylesReady]);
 
             if (route.scripts) {
                 try {
@@ -644,7 +755,13 @@ export const spaLoaderContentForVite = (options = {}) => {
             notifyRouteLoaded(route);
 
         } catch (error) {
+
             isPopNavigation = false;
+
+            if (isViewTransitionAbort(error)) {
+                return;
+            }
+
             notifyRouteLoadError(route, error, 'loadContent');
             throw error;
         }

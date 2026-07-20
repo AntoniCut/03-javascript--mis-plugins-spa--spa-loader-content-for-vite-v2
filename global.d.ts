@@ -26,6 +26,21 @@ declare module '*.html?raw' {
     export default content;
 }
 
+declare module '*.scss?url' {
+    const href: string;
+    export default href;
+}
+
+declare module '*.css?url' {
+    const href: string;
+    export default href;
+}
+
+declare module '*.scss' {
+    const content: string;
+    export default content;
+}
+
 
 // Assets como SVGs
 declare module '*.svg' {
@@ -52,4 +67,17 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
     readonly env: ImportMetaEnv;
+}
+
+
+/** Promesas de una View Transition (Chromium / Safari recientes). */
+interface ViewTransition {
+    readonly updateCallbackDone: Promise<void>;
+    readonly ready: Promise<void>;
+    readonly finished: Promise<void>;
+    skipTransition(): void;
+}
+
+interface Document {
+    startViewTransition?: (updateCallback: () => void | Promise<void>) => ViewTransition;
 }

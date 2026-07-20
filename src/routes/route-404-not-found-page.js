@@ -22,10 +22,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta 404 Not Found  -----` */
 export const route404NotFoundPage = {
     id: '404NotFoundPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(notFoundPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(notFoundPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/vite.svg`,
     pageTitle: '404 - Página no encontrada',
     path: '404-not-found-page',

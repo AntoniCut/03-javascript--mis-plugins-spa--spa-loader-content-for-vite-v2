@@ -31,10 +31,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de inicio  -----` */
 export const route00Home = {
     id: 'home',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(home),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(home),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/javascript.svg`,
     pageTitle: 'spa-loader-content-for-vite — Plugin SPA v2',
     path: '/',

@@ -14,6 +14,7 @@ import { bindNavbarMenu } from '@components/layout/bind-navbar-menu.js';
 
 /**
  * - Componente `Navbar de la aplicación` (markup v3)
+ * @returns {void}
  */
 export const Navbar = () => {
 

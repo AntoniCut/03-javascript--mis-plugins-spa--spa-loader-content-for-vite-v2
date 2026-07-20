@@ -24,10 +24,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de jQuery Page  -----` */
 export const routeJqueryPage = {
     id: 'jqueryPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(jqueryPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(jqueryPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/jquery-icon.svg`,
     pageTitle: 'jQuery — The Write Less, Do More Library',
     path: 'jquery-page',

@@ -6,21 +6,27 @@
 */
 
 
+// Estilos globales primero → el loader nace ya estilado
 import '@styles/scss/globals.scss';
+
+import { createLoader } from '@/effects/create-loader.js';
 import { effectLoadingPage } from '@/effects/effect-loading-page.js';
-import { App } from "@app/App.js";
+import { App } from '@app/App.js';
 
 
-/** @type {HTMLDivElement|null} - `Elemento principal de la aplicación`. Selecciona el elemento con id `app` del DOM */
+//  ----------  Loader montado desde JS (sin markup en index.html)  ----------
+createLoader();
+
+
+/** @type {HTMLDivElement|null} */
 const $app = document.querySelector('#app');
 
-
-//  ----------  Validamos que el elemento #app exista en el DOM  ----------
-if (!$app)
+if (!$app) {
     throw new Error('No se ha encontrado el elemento #app');
+}
 
 
-//  ----------  Loader inicial (espera spa:first-route-loaded)  ----------
+//  ----------  Loader: espera spa:first-route-loaded y hace fade-out  ----------
 effectLoadingPage();
 
 
