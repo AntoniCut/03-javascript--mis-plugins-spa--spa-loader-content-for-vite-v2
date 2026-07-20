@@ -12,6 +12,10 @@ import { Navbar } from '@components/layout/layout-navbar.js';
 import { Main } from '@components/layout/layout-main.js';
 import { Footer } from '@components/layout/layout-footer.js';
 
+import layoutHeader from '@components/layout/layout-header.html?raw';
+import layoutNavbar from '@components/layout/layout-navbar.html?raw';
+import layoutFooter from '@components/layout/layout-footer.html?raw';
+
 import jqueryPage from '@pages/jquery/jquery-page.html?raw';
 import jqueryPageRouteStyles from '@styles/scss/pages/jquery-page.scss?url';
 import { mount as mountJqueryPage } from '@scripts/js/pages/jquery-page.esm.js';
@@ -25,10 +29,10 @@ import { base } from '@/config/base.js';
 export const routeJqueryPage = {
     id: 'jqueryPage',
     components: {
-        layoutHeader: Header,
-        layoutNavbar: Navbar,
+        layoutHeader: Header(layoutHeader),
+        layoutNavbar: Navbar(layoutNavbar),
         layoutMain: Main(jqueryPage),
-        layoutFooter: Footer,
+        layoutFooter: Footer(layoutFooter),
     },
     favicon: `${base}/favicon/jquery-icon.svg`,
     pageTitle: 'jQuery — The Write Less, Do More Library',

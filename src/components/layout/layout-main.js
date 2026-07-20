@@ -15,13 +15,13 @@
 
 export const Main = (html = '') => {
 
-   return () => {
-        
-    /**
-     * - Selecciona el elemento Main del DOM
-     * @type {HTMLMainElement|null}
-     */
-    const $layoutMain = document.querySelector('#layoutMain');
+    return () => {
+
+        /**
+         * - Selecciona el elemento Main del DOM
+         * @type {HTMLMainElement|null}
+         */
+        const $layoutMain = document.querySelector('#layoutMain');
 
         if (!$layoutMain)
             throw new Error('No se encontró el elemento #layoutMain en el DOM.');

@@ -12,6 +12,10 @@ import { Navbar } from '@components/layout/layout-navbar.js';
 import { Main } from '@components/layout/layout-main.js';
 import { Footer } from '@components/layout/layout-footer.js';
 
+import layoutHeader from '@components/layout/layout-header.html?raw';
+import layoutNavbar from '@components/layout/layout-navbar.html?raw';
+import layoutFooter from '@components/layout/layout-footer.html?raw';
+
 import notFoundPage from '@pages/404/404-not-found-page.html?raw';
 import { base } from '@/config/base.js';
 
@@ -23,10 +27,10 @@ import { base } from '@/config/base.js';
 export const route404NotFoundPage = {
     id: '404NotFoundPage',
     components: {
-        layoutHeader: Header,
-        layoutNavbar: Navbar,
+        layoutHeader: Header(layoutHeader),
+        layoutNavbar: Navbar(layoutNavbar),
         layoutMain: Main(notFoundPage),
-        layoutFooter: Footer,
+        layoutFooter: Footer(layoutFooter),
     },
     favicon: `${base}/favicon/vite.svg`,
     pageTitle: '404 - Página no encontrada',

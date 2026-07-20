@@ -13,6 +13,10 @@ import { Navbar } from '@components/layout/layout-navbar.js';
 import { Main } from '@components/layout/layout-main.js';
 import { Footer } from '@components/layout/layout-footer.js';
 
+import layoutHeader from '@components/layout/layout-header.html?raw';
+import layoutNavbar from '@components/layout/layout-navbar.html?raw';
+import layoutFooter from '@components/layout/layout-footer.html?raw';
+
 
 // -----  Importa las páginas  -----
 import home from '@pages/home.html?raw';
@@ -32,10 +36,10 @@ import { base } from '@/config/base.js';
 export const route00Home = {
     id: 'home',
     components: {
-        layoutHeader: Header,
-        layoutNavbar: Navbar,
+        layoutHeader: Header(layoutHeader),
+        layoutNavbar: Navbar(layoutNavbar),
         layoutMain: Main(home),
-        layoutFooter: Footer,
+        layoutFooter: Footer(layoutFooter),
     },
     favicon: `${base}/favicon/javascript.svg`,
     pageTitle: 'spa-loader-content-for-vite — Plugin SPA v2',
