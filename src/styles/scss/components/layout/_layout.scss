@@ -42,6 +42,9 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 2rem;
+
+    opacity: 0;
+    transition: opacity 400ms ease-in-out;
 }
 
 

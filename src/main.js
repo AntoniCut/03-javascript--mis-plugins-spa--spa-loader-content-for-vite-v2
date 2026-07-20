@@ -7,6 +7,7 @@
 
 
 import '@styles/scss/globals.scss';
+import { effectLoadingPage } from '@/effects/effect-loading-page.js';
 import { App } from "@app/App.js";
 
 
@@ -19,9 +20,9 @@ if (!$app)
     throw new Error('No se ha encontrado el elemento #app');
 
 
+//  ----------  Loader inicial (espera spa:first-route-loaded)  ----------
+effectLoadingPage();
+
+
 //  ----------  Inicializamos la aplicación  ----------
 App($app);
-
-
-
-
