@@ -9,27 +9,29 @@
 
 
 /** @typedef {import('../../types/config-option-spa-types.js').ConfigOptionsSPA} ConfigOptionsSPA */
+/** @typedef {import('../../types/config-option-spa-types.js').ResolvedConfigOptionsSPA} ResolvedConfigOptionsSPA */
 /** @typedef {import('../../types/route-types.js').Route} Route */
 /** @typedef {import('../../types/route-manifest-types.js').RouteManifest} RouteManifest */
 
 
 /**
- * -------------------------------------
- * ----- spaLoaderContentForVite() -----
- * -------------------------------------
+ * -----------------------------------------------------
+ * -----  `spaLoaderContentForVite(options = {})`  -----
+ * -----------------------------------------------------
  * @version  2.1.0
  * @author Antonio Francisco Cutillas García
- * 
+ *
  * - Plugin SPA para cargar contenido dinámico en layouts definidos.
  * - Soporta dos modos: eager loading (routes array) y lazy loading (routeManifest + routeModules).
  * - Usa `import.meta.glob` de Vite para lazy loading compatible con producción.
  * - Respeta transiciones de View Transition si el navegador lo soporta.
- * - Carga dinámicamente componentes JS en los layouts definidos
- * - Solo soporta scripts de tipo función directa
- * - Maneja estilos dinámicos (swap por página) y actualización de history
- * - Emite eventos: spa:route-loaded, spa:first-route-loaded, spa:route-load-error
- * 
- * @param {Partial<ConfigOptionsSPA>} options - Opciones de configuración del plugin
+ * - Carga dinámicamente componentes JS en los layouts definidos.
+ * - Solo soporta scripts de tipo función directa.
+ * - Maneja estilos dinámicos (swap por página) y actualización de history.
+ * - Emite eventos: spa:route-loaded, spa:first-route-loaded, spa:route-load-error.
+ *
+ * @param {Partial<ConfigOptionsSPA>} [options={}] - Opciones de configuración del plugin.
+ * @returns {void}
  */
 
 export const spaLoaderContentForVite = (options = {}) => {
@@ -51,8 +53,8 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * - Configuración por defecto del plugin
-     * @type {ConfigOptionsSPA}
+     * - Configuración por defecto del plugin (defaults + options).
+     * @type {ResolvedConfigOptionsSPA}
      */
     const settings = {
         routes: [],
@@ -68,25 +70,27 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * - Cache de módulos de ruta ya importados dinámicamente (solo para lazy loading)
+     * - Cache de módulos de ruta ya importados dinámicamente (solo para lazy loading).
      * @type {Map<string, Route>}
      */
     const routeCache = new Map();
 
 
     /**
-     * - Indica si se usa el modo lazy loading con manifest
+     * - Indica si se usa el modo lazy loading con manifest.
      * @type {boolean}
      */
     const useLazyLoading = Array.isArray(settings.routeManifest) && settings.routeManifest.length > 0 && typeof settings.routeModules === 'object' && Object.keys(settings.routeModules).length > 0;
 
 
     /**
-     * - Normaliza un path dejando "/" inicial y sin slash final (excepto raíz "/")
-     * @param {string} path
-     * @returns {string}
+     * ---------------------------------------------
+     * -----  `normalizePath(path = '/')`  -----
+     * ---------------------------------------------
+     * - Normaliza un path dejando "/" inicial y sin slash final (excepto raíz "/").
+     * @param {string} [path='/'] - Path a normalizar.
+     * @returns {string} - Path normalizado.
      */
-
     const normalizePath = (path = '/') => {
 
         let normalizedPath = `${path}`.trim();
@@ -110,9 +114,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * -------------------------------------------------
+     * -----  `normalizeBasePath(basePath = '')`  -----
+     * -------------------------------------------------
      * - Normaliza el base path removiendo slash final (excepto raíz).
-     * @param {string} basePath
-     * @returns {string}
+     * @param {string} [basePath=''] - Base path a normalizar.
+     * @returns {string} - Base path normalizado ('' si es raíz).
      */
     const normalizeBasePath = (basePath = '') => {
 
@@ -142,9 +149,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * -------------------------------------------------
+     * -----  `stripBaseFromPath(path = '/')`  -----
+     * -------------------------------------------------
      * - Elimina el `base` del path recibido para compararlo contra rutas internas.
-     * @param {string} path
-     * @returns {string}
+     * @param {string} [path='/'] - Pathname del navegador (puede incluir base).
+     * @returns {string} - Path interno sin base.
      */
     const stripBaseFromPath = (path = '/') => {
 
@@ -169,9 +179,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * - Construye la URL de navegador para una ruta.
-     * @param {string} routePath
-     * @returns {string}
+     * -------------------------------------------------------
+     * -----  `getRouteBrowserPath(routePath = '/')`  -----
+     * -------------------------------------------------------
+     * - Construye la URL de navegador para una ruta (base + path interno).
+     * @param {string} [routePath='/'] - Path interno de la ruta.
+     * @returns {string} - URL absoluta de navegador (pathname).
      */
     const getRouteBrowserPath = (routePath = '/') => {
 
@@ -189,7 +202,7 @@ export const spaLoaderContentForVite = (options = {}) => {
     };
 
 
-    /**
+    /*
      * --------------------------------------
      * -----  Lazy Loading Functions  -----
      * --------------------------------------
@@ -197,9 +210,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * ----------------------------------------------------------
+     * -----  `findManifestEntryByPath(rawPathname = '/')`  -----
+     * ----------------------------------------------------------
      * - Busca una entrada en el manifest por path normalizado.
-     * @param {string} rawPathname - Pathname sin normalizar
-     * @returns {RouteManifest|undefined}
+     * @param {string} [rawPathname='/'] - Pathname sin normalizar.
+     * @returns {RouteManifest|undefined} - Entrada del manifest encontrada.
      */
     const findManifestEntryByPath = (rawPathname = '/') => {
 
@@ -211,9 +227,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * ---------------------------------------------
+     * -----  `findManifestEntryById(id)`  -----
+     * ---------------------------------------------
      * - Busca una entrada en el manifest por id.
-     * @param {string} id - Identificador de la ruta
-     * @returns {RouteManifest|undefined}
+     * @param {string} id - Identificador de la ruta.
+     * @returns {RouteManifest|undefined} - Entrada del manifest encontrada.
      */
     const findManifestEntryById = (id) => {
 
@@ -223,9 +242,13 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * ----------------------------------------
+     * -----  `loadRouteModule(file)`  -----
+     * ----------------------------------------
+     * @async
      * - Importa dinámicamente un módulo de ruta usando el glob map de Vite.
-     * @param {string} file - Nombre del archivo de ruta sin extensión
-     * @returns {Promise<Route|undefined>}
+     * @param {string} file - Nombre del archivo de ruta sin extensión.
+     * @returns {Promise<Route|undefined>} - Ruta cargada o undefined si falla.
      */
     const loadRouteModule = async (file) => {
 
@@ -246,7 +269,8 @@ export const spaLoaderContentForVite = (options = {}) => {
 
             const mod = await importFn();
 
-            const route = Object.values(mod)[0];
+            /** @type {Route|undefined} */
+            const route = /** @type {Route|undefined} */ (Object.values(mod)[0]);
 
             if (route) {
                 routeCache.set(file, route);
@@ -265,6 +289,9 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * -------------------------------------
+     * -----  `findNotFoundRoute()`  -----
+     * -------------------------------------
      * - Obtiene la entrada 404 del manifest (lazy) o de routes (eager).
      * @returns {{ id: string, path: string, file?: string, route?: Route }|undefined}
      */
@@ -292,8 +319,13 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * ---------------------------------------------
+     * -----  `loadNotFoundRoute(source)`  -----
+     * ---------------------------------------------
+     * @async
      * - Carga la ruta 404 dinámicamente desde el manifest o routes.
-     * @param {'init'|'click'|'popstate'} source - Origen del intento de carga
+     * @param {'init'|'click'|'popstate'} source - Origen del intento de carga.
+     * @returns {Promise<void>}
      */
     const loadNotFoundRoute = async (source) => {
 
@@ -332,7 +364,9 @@ export const spaLoaderContentForVite = (options = {}) => {
      * ----------------------------------------
      * -----  `notifyRouteLoaded(route)`  -----
      * ----------------------------------------
-     * @param {Route} route
+     * - Emite `spa:route-loaded` y, una sola vez, `spa:first-route-loaded`.
+     * @param {Route} route - Ruta que terminó de cargarse.
+     * @returns {void}
      */
     const notifyRouteLoaded = (route) => {
 
@@ -357,9 +391,11 @@ export const spaLoaderContentForVite = (options = {}) => {
      * ----------------------------------------------------------
      * -----  `notifyRouteLoadError(route, error, source)`  -----
      * ----------------------------------------------------------
-     * @param {Route|undefined} route
-     * @param {unknown} error
-     * @param {string} source
+     * - Emite `spa:route-load-error` y desbloquea el loader inicial si hace falta.
+     * @param {Route|undefined} route - Ruta asociada al error (si existe).
+     * @param {unknown} error - Error capturado.
+     * @param {string} source - Origen del fallo (init, click, popstate, loadContent…).
+     * @returns {void}
      */
     const notifyRouteLoadError = (route, error, source) => {
 
@@ -385,12 +421,13 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * ----------------------------------
-     * -----  Actualiza el favicon  -----
-     * ----------------------------------
-     * @param {string} favicon
+     * ------------------------------------
+     * -----  `updateFavicon(favicon)`  -----
+     * ------------------------------------
+     * - Actualiza el favicon del documento (in-place si ya existe).
+     * @param {string} favicon - URL del favicon.
+     * @returns {void}
      */
-
     const updateFavicon = (favicon) => {
         if (!favicon) return;
 
@@ -428,7 +465,9 @@ export const spaLoaderContentForVite = (options = {}) => {
      * -------------------------------------------
      * -----  `addTitleHeaderFooter(title)`  -----
      * -------------------------------------------
-     * @param {string} title
+     * - Inyecta el título dinámico en header y footer del layout.
+     * @param {string} title - Texto para `#headerTitle` y `#footerTitle`.
+     * @returns {void}
      */
     const addTitleHeaderFooter = (title) => {
 
@@ -454,8 +493,8 @@ export const spaLoaderContentForVite = (options = {}) => {
      *   (evita FOUC). Resuelve cuando el CSS está listo (o de inmediato si
      *   ya estaba activo / no hay href).
      * - Sin cache-bust: las URLs de Vite ya llevan hash.
-     * @param {string|null|undefined} href
-     * @returns {Promise<void>}
+     * @param {string|null|undefined} href - URL del CSS de página (típicamente `?url` de Vite).
+     * @returns {Promise<void>} - Promesa que se resuelve cuando el CSS está listo.
      */
     const loadStylesheetsByPage = (href) => {
 
@@ -485,6 +524,14 @@ export const spaLoaderContentForVite = (options = {}) => {
             link.dataset.pageStyle = 'true';
 
             let settled = false;
+
+            /**
+             * -----------------------------
+             * -----  `finish()`  -----
+             * -----------------------------
+             * - Quita links CSS antiguos y resuelve la promesa del swap.
+             * @returns {void}
+             */
             const finish = () => {
                 if (settled) {
                     return;
@@ -511,13 +558,14 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * ----------------------------------
-     * -----  Procesa un script  -------
-     * ----------------------------------
-     * @param {Function} scriptEntry
+     * -----------------------------------------------
+     * -----  `processScriptEntry(scriptEntry)`  -----
+     * -----------------------------------------------
+     * @async
+     * - Ejecuta un script de ruta (función sync o async).
+     * @param {Function} scriptEntry - Función a ejecutar tras renderizar el DOM.
      * @returns {Promise<void>}
      */
-
     const processScriptEntry = async (scriptEntry) => {
 
         if (typeof scriptEntry === 'function') {
@@ -533,13 +581,14 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * --------------------------------------
-     * -----  Procesa lista de scripts  -----
-     * --------------------------------------
-     * @param {Function[]} scripts
+     * ---------------------------------------------
+     * -----  `processScriptsList(scripts)`  -----
+     * ---------------------------------------------
+     * @async
+     * - Ejecuta en orden la lista de scripts de una ruta.
+     * @param {Function[]|null|undefined} scripts - Lista de funciones de ruta.
      * @returns {Promise<void>}
      */
-
     const processScriptsList = async (scripts) => {
 
         if (!scripts || !Array.isArray(scripts)) return;
@@ -551,13 +600,15 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * --------------------------------------
-     * -----  Renderiza un componente  -----
-     * --------------------------------------
-     * @param {string} selector
-     * @param {(() => (void|Node|null|undefined))|undefined} Component
+     * -------------------------------------------------------
+     * -----  `renderComponent(selector, Component)`  -----
+     * -------------------------------------------------------
+     * - Monta una factory de componente en el contenedor del selector.
+     * - Soporta factories in-place (void) o que devuelven un Node.
+     * @param {string} selector - Selector CSS del contenedor.
+     * @param {(() => (void|Node|null|undefined))|undefined} Component - Factory del componente.
+     * @returns {void}
      */
-
     const renderComponent = (selector, Component) => {
 
         const container = document.querySelector(selector);
@@ -594,14 +645,13 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * --------------------------------------
-     * -----  Carga contenido DOM  ---------
-     * --------------------------------------
-     * Itera `route.components`: cada clave es un slot de layout
-     * (`layoutHeader`, `layoutNavbar`, …) cuyo selector está en `settings`.
-     * @param {Route} route
+     * -------------------------------------
+     * -----  `loadContentDOM(route)`  -----
+     * -------------------------------------
+     * - Itera `route.components` y monta cada factory en su slot de layout.
+     * @param {Route} route - Ruta cuyos componentes se van a renderizar.
+     * @returns {void}
      */
-
     const loadContentDOM = (route) => {
 
         if (!route) {
@@ -615,9 +665,17 @@ export const spaLoaderContentForVite = (options = {}) => {
             return;
         }
 
+        /** @type {Record<string, string>} */
+        const layoutSelectors = {
+            layoutHeader: settings.layoutHeader,
+            layoutNavbar: settings.layoutNavbar,
+            layoutMain: settings.layoutMain,
+            layoutFooter: settings.layoutFooter,
+        };
+
         for (const [slot, Component] of Object.entries(components)) {
 
-            const selector = /** @type {Record<string, string|undefined>} */ (settings)[slot];
+            const selector = layoutSelectors[slot];
 
             if (!selector) {
                 console.warn(`⚠️ Slot desconocido "${slot}" en ruta '${route.id}' — se omite.`);
@@ -630,9 +688,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
+     * -------------------------------------------------------
+     * -----  `buildHistoryState(route, browserPath)`  -----
+     * -------------------------------------------------------
      * - Construye el state del history para una ruta.
-     * @param {Route} route
-     * @param {string} browserPath
+     * @param {Route} route - Ruta asociada.
+     * @param {string} browserPath - Pathname canónico en el navegador.
      * @returns {{ id: string|null, path: string, routeFile: string|null, favicon: string|null }}
      */
     const buildHistoryState = (route, browserPath) => {
@@ -649,9 +710,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * View Transition saltada (navegación rápida / pestaña oculta) → AbortError esperado.
-     * @param {unknown} error
-     * @returns {boolean}
+     * ---------------------------------------------
+     * -----  `isViewTransitionAbort(error)`  -----
+     * ---------------------------------------------
+     * - Detecta AbortError de View Transition saltada (navegación rápida / pestaña oculta).
+     * @param {unknown} error - Error a inspeccionar.
+     * @returns {boolean} - true si es AbortError de transición saltada.
      */
     const isViewTransitionAbort = (error) => {
         return Boolean(
@@ -664,9 +728,13 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * Ejecuta el paint con View Transition si está disponible.
-     * Ignora AbortError cuando la transición se salta.
-     * @param {() => void} paint
+     * -----------------------------------------
+     * -----  `runPaintTransition(paint)`  -----
+     * -----------------------------------------
+     * @async
+     * - Ejecuta el paint con View Transition si está disponible.
+     * - Ignora AbortError cuando la transición se salta.
+     * @param {() => void} paint - Callback que actualiza el DOM.
      * @returns {Promise<void>}
      */
     const runPaintTransition = async (paint) => {
@@ -698,11 +766,13 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * --------------------------------------
-     * -----  Carga el contenido  ---------
-     * --------------------------------------
-     * @param {Route} route
-     * @param {boolean} [pushHistory=true]
+     * ------------------------------------------------------------
+     * -----  `loadContent(route, pushHistory = true)`  -----
+     * ------------------------------------------------------------
+     * @async
+     * - Carga una ruta: meta (title/favicon), CSS, DOM, scripts e history.
+     * @param {Route} route - Ruta a cargar.
+     * @param {boolean} [pushHistory=true] - Si debe hacer pushState (false en popstate/init).
      * @returns {Promise<void>}
      */
     const loadContent = async (route, pushHistory = true) => {
@@ -721,7 +791,10 @@ export const spaLoaderContentForVite = (options = {}) => {
             const stylesReady = loadStylesheetsByPage(route.styles);
 
             /**
-             * Paint: DOM + títulos de layout. Los estilos ya van en paralelo.
+             * -----------------------------
+             * -----  `paint()`  -----
+             * -----------------------------
+             * - Paint: DOM + títulos de layout. Los estilos ya van en paralelo.
              * @returns {void}
              */
             const paint = () => {
@@ -770,10 +843,11 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * -----------------------------------
-     * -----  Configura eventos SPA  -----
-     * -----  (modo eager loading)  -----
-     * -----------------------------------
+     * -------------------------------------
+     * -----  `setupEventListeners()`  -----
+     * -------------------------------------
+     * - Configura click y popstate en modo eager loading.
+     * @returns {void}
      */
     const setupEventListeners = () => {
 
@@ -785,7 +859,7 @@ export const spaLoaderContentForVite = (options = {}) => {
 
             const link = e.target.closest('a[data-id]');
 
-            if (!link) {
+            if (!(link instanceof HTMLElement)) {
                 return;
             }
 
@@ -824,10 +898,11 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * -----------------------------------
-     * -----  Configura eventos SPA  -----
-     * -----  (modo lazy loading)  -----
-     * -----------------------------------
+     * -----------------------------------------
+     * -----  `setupLazyEventListeners()`  -----
+     * -----------------------------------------
+     * - Configura click y popstate en modo lazy loading (manifest + glob).
+     * @returns {void}
      */
     const setupLazyEventListeners = () => {
 
@@ -839,7 +914,7 @@ export const spaLoaderContentForVite = (options = {}) => {
 
             const link = e.target.closest('a[data-id]');
 
-            if (!link) {
+            if (!(link instanceof HTMLElement)) {
                 return;
             }
 
@@ -919,12 +994,12 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * -----------------------------------
-     * -----  Inicializa el plugin  -----
-     * -----  (modo eager loading)  -----
-     * -----------------------------------
+     * -------------------------
+     * -----  `init()`  -----
+     * -------------------------
+     * - Inicializa el plugin en modo eager loading.
+     * @returns {void}
      */
-
     const init = () => {
 
         console.warn('✅ Plugin SPA cargado correctamente (eager loading)');
@@ -961,12 +1036,13 @@ export const spaLoaderContentForVite = (options = {}) => {
 
 
     /**
-     * -----------------------------------
-     * -----  Inicializa el plugin  -----
-     * -----  (modo lazy loading)  -----
-     * -----------------------------------
+     * -----------------------------
+     * -----  `initLazy()`  -----
+     * -----------------------------
+     * @async
+     * - Inicializa el plugin en modo lazy loading (`import.meta.glob`).
+     * @returns {Promise<void>}
      */
-
     const initLazy = async () => {
 
         console.warn('✅ Plugin SPA cargado correctamente (lazy loading con import.meta.glob)');
