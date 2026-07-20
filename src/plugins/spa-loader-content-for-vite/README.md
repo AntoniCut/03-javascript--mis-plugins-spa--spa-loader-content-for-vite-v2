@@ -2,6 +2,28 @@
 
 Plugin SPA para Vite: monta componentes JS en layouts fijos con lazy loading vía `import.meta.glob`.
 
+## Forma de una ruta
+
+```js
+export const routeAstroPage = {
+  id: 'astroPage',
+  path: 'astro-page',
+  components: {
+    layoutHeader: Header,
+    layoutNavbar: Navbar,
+    layoutMain: Main(astroPage),
+    layoutFooter: Footer,
+  },
+  favicon: `${base}/favicon/astro-official.svg`,
+  pageTitle: 'Astro — Framework de Sitios Estáticos',
+  headerTitle: 'Astro — Framework de Sitios Estáticos',
+  styles: astroPageRouteStyles,
+  scripts: [mountAstroPage],
+};
+```
+
+Las claves de `components` son slots de layout (`layoutHeader`, …). El plugin itera el mapa y monta cada factory en el selector definido en la config del mismo nombre.
+
 ## Uso
 
 ```js
@@ -39,7 +61,11 @@ document.addEventListener('spa:route-loaded', (e) => {
 
 ## Estilos por página
 
-`route.styles` (string, típico `?url` de Vite) se inserta como `link[data-page-style="true"]`. Al cambiar de ruta se eliminan los links anteriores. No se añade cache-bust a URLs hasheadas de Vite.
+`route.styles` (string, típico `?url` de Vite) se inserta como `link[data-page-style="true"]`.
+
+- Title y favicon se aplican al inicio de la navegación (sin esperar al paint).
+- El CSS se descarga en paralelo al DOM; el link nuevo se inserta antes de quitar el anterior (sin FOUC).
+- Con View Transitions se espera `updateCallbackDone` (DOM listo), no `finished` (fin de animación).
 
 ## Qué no hace (a propósito)
 

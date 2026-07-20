@@ -12,6 +12,7 @@ import javascriptLogo from '@assets/logos/javascript-logo.svg';
 
 /**
  * - Componente `Footer de la aplicación` (markup v3)
+ * @returns {void}
  */
 export const Footer = () => {
 

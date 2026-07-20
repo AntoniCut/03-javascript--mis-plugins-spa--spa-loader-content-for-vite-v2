@@ -24,10 +24,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de Astro Page  -----` */
 export const routeAstroPage = {
     id: 'astroPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(astroPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(astroPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/astro-official.svg`,
     pageTitle: 'Astro — Framework de Sitios Estáticos',
     path: 'astro-page',

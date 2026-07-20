@@ -24,10 +24,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de CSS Page  -----` */
 export const routeCssPage = {
     id: 'cssPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(cssPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(cssPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/css-icon.svg`,
     pageTitle: 'CSS3 — Cascading Style Sheets',
     path: 'css-page',

@@ -24,10 +24,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de JavaScript Page  -----` */
 export const routeJavascriptPage = {
     id: 'javascriptPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(javascriptPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(javascriptPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/javascript-icon.svg`,
     pageTitle: 'JavaScript ES6+ — El Lenguaje de la Web',
     path: 'javascript-page',

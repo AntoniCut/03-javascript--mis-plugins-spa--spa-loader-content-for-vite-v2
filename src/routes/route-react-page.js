@@ -24,10 +24,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de React Page  -----` */
 export const routeReactPage = {
     id: 'reactPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(reactPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(reactPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/react-icon.svg`,
     pageTitle: 'React — Biblioteca UI Declarativa',
     path: 'react-page',

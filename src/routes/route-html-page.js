@@ -24,10 +24,12 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de HTML Page  -----` */
 export const routeHtmlPage = {
     id: 'htmlPage',
-    LayoutHeaderComponent: Header,
-    LayoutNavbarComponent: Navbar,
-    LayoutMainComponent: Main(htmlPage),
-    LayoutFooterComponent: Footer,
+    components: {
+        layoutHeader: Header,
+        layoutNavbar: Navbar,
+        layoutMain: Main(htmlPage),
+        layoutFooter: Footer,
+    },
     favicon: `${base}/favicon/html-icon.svg`,
     pageTitle: 'HTML5 — HyperText Markup Language',
     path: 'html-page',
