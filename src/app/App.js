@@ -24,6 +24,8 @@ import { spa } from "@spa/spa.js";
  
 export const App = ($app) => {
 
+    $app.classList.add('layout');
+
 
     /*  
         --------------------

@@ -8,7 +8,7 @@
 
 
 //  -----  Importa los componentes de layout  -----
-import { HeaderHome } from '@components/layout/layout-header-home.js';
+import { Header } from '@components/layout/layout-header.js';
 import { Navbar } from '@components/layout/layout-navbar.js';
 import { Main } from '@components/layout/layout-main.js';
 import { Footer } from '@components/layout/layout-footer.js';
@@ -31,7 +31,7 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de inicio  -----` */
 export const route00Home = {
     id: 'home',
-    LayoutHeaderComponent: HeaderHome,
+    LayoutHeaderComponent: Header,
     LayoutNavbarComponent: Navbar,
     LayoutMainComponent: Main(home),
     LayoutFooterComponent: Footer,

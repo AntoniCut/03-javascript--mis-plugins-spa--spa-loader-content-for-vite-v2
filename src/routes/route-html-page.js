@@ -7,7 +7,7 @@
 */
 
 
-import { HeaderHtmlPage } from '@components/layout/layout-header-html-page.js';
+import { Header } from '@components/layout/layout-header.js';
 import { Navbar } from '@components/layout/layout-navbar.js';
 import { Main } from '@components/layout/layout-main.js';
 import { Footer } from '@components/layout/layout-footer.js';
@@ -24,7 +24,7 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de HTML Page  -----` */
 export const routeHtmlPage = {
     id: 'htmlPage',
-    LayoutHeaderComponent: HeaderHtmlPage,
+    LayoutHeaderComponent: Header,
     LayoutNavbarComponent: Navbar,
     LayoutMainComponent: Main(htmlPage),
     LayoutFooterComponent: Footer,

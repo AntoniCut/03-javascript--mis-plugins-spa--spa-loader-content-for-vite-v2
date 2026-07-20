@@ -7,7 +7,7 @@
 */
 
 
-import { HeaderReactPage } from '@components/layout/layout-header-react-page.js';
+import { Header } from '@components/layout/layout-header.js';
 import { Navbar } from '@components/layout/layout-navbar.js';
 import { Main } from '@components/layout/layout-main.js';
 import { Footer } from '@components/layout/layout-footer.js';
@@ -24,7 +24,7 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de React Page  -----` */
 export const routeReactPage = {
     id: 'reactPage',
-    LayoutHeaderComponent: HeaderReactPage,
+    LayoutHeaderComponent: Header,
     LayoutNavbarComponent: Navbar,
     LayoutMainComponent: Main(reactPage),
     LayoutFooterComponent: Footer,

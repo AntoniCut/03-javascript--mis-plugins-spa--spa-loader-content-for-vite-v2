@@ -6,9 +6,9 @@
 
 
 /**
- * -------------------------
- * ----------  `base`  -----
- * -------------------------
+ * --------------------
+ * -----  `base`  -----
+ * --------------------
  * - `Base pública` de la aplicación servida por Vite.
  * - `import.meta.env.BASE_URL` ya incluye la base configurada en `vite.config.js`.
  */

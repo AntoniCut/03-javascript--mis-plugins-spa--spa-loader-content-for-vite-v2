@@ -7,7 +7,7 @@
 */
 
 
-import { HeaderCssPage } from '@components/layout/layout-header-css-page.js';
+import { Header } from '@components/layout/layout-header.js';
 import { Navbar } from '@components/layout/layout-navbar.js';
 import { Main } from '@components/layout/layout-main.js';
 import { Footer } from '@components/layout/layout-footer.js';
@@ -24,7 +24,7 @@ import { base } from '@/config/base.js';
 /** @type {Route} - `-----  Ruta de CSS Page  -----` */
 export const routeCssPage = {
     id: 'cssPage',
-    LayoutHeaderComponent: HeaderCssPage,
+    LayoutHeaderComponent: Header,
     LayoutNavbarComponent: Navbar,
     LayoutMainComponent: Main(cssPage),
     LayoutFooterComponent: Footer,

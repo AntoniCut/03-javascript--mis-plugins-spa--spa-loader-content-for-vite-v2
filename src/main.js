@@ -6,8 +6,7 @@
 */
 
 
-import '@styles/view-transition.css';
-import '@styles/style.css';
+import '@styles/scss/globals.scss';
 import { App } from "@app/App.js";
 
 
