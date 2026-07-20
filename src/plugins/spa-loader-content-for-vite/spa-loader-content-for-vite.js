@@ -1,10 +1,7 @@
-/* 
-    ----------------------------------------------------- 
-    ---------- javascript.antonydev.tech  ---------------
-    ---------- /src/plugins/ ---------------------------- 
-    ---------- /spa-loader-content-for-vite/ ------------ 
-    ---------- /spa-loader-content-for-vite.js ---------- 
-    ----------------------------------------------------- 
+/*
+    *  -------------------------------------------------------------------------------------------------------------------------  *
+    *  -----  spa-loader-content-for-vite.js  --  /src/plugins/spa-loader-content-for-vite/spa-loader-content-for-vite.js  -----  *
+    *  -------------------------------------------------------------------------------------------------------------------------  *
 */
 
 
@@ -425,23 +422,49 @@ export const spaLoaderContentForVite = (options = {}) => {
      * -----  `updateFavicon(favicon)`  -----
      * ------------------------------------
      * - Actualiza el favicon del documento (in-place si ya existe).
+     * - Acepta rutas públicas (`${base}/favicon/...`), URLs de Vite (`import x from '...svg'`)
+     *   y data URLs (SVGs pequeños inlined por `assetsInlineLimit`).
+     * - El cache-bust `?v=` solo se aplica a rutas HTTP normales sin query previa;
+     *   nunca a `data:` (rompería el favicon).
      * @param {string} favicon - URL del favicon.
      * @returns {void}
      */
     const updateFavicon = (favicon) => {
-        if (!favicon) return;
+        
+        if (!favicon) 
+            return;
 
-        const newAbsolute = new URL(favicon, document.baseURI).href;
-        const newHref = `${favicon}?v=${_faviconSessionKey}`;
+        const isDataUrl = favicon.startsWith('data:');
+        const newAbsolute = isDataUrl
+            ? favicon
+            : new URL(favicon, document.baseURI).href;
+
+        /** Cache-bust solo en rutas de archivo sin query; no en data:/URLs ya versionadas. */
+        const newHref = (isDataUrl || favicon.includes('?'))
+            ? favicon
+            : `${favicon}?v=${_faviconSessionKey}`;
 
         /** @type {HTMLLinkElement|null} */
-        const existing = /** @type {HTMLLinkElement|null} */ (document.querySelector('link[rel~="icon"]'));
+        const existing = /** @type {HTMLLinkElement|null} */ (
+            document.querySelector('link[rel~="icon"]')
+        );
 
         if (existing) {
-            if (existing.href.split('?')[0] === newAbsolute) {
+            const currentHref = existing.getAttribute('href') || existing.href;
+            const currentComparable = currentHref.startsWith('data:')
+                ? currentHref
+                : currentHref.split('?')[0];
+            const nextComparable = isDataUrl
+                ? favicon
+                : newAbsolute;
+
+            if (currentComparable === nextComparable) {
                 return;
             }
 
+            existing.type = isDataUrl || /\.svg(\?|$)/i.test(favicon)
+                ? 'image/svg+xml'
+                : existing.type || 'image/x-icon';
             existing.href = newHref;
 
             document.querySelectorAll('link[rel~="icon"]').forEach(link => {
@@ -455,7 +478,9 @@ export const spaLoaderContentForVite = (options = {}) => {
 
         const link = document.createElement('link');
         link.rel = 'icon';
-        link.type = 'image/x-icon';
+        link.type = (isDataUrl || /\.svg(\?|$)/i.test(favicon))
+            ? 'image/svg+xml'
+            : 'image/x-icon';
         link.href = newHref;
         document.head.appendChild(link);
     };

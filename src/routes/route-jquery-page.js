@@ -1,16 +1,14 @@
 /*
-    ------------------------------------------------------------
-    ----------  /javascript.antonydev.tech/  -------------------
-    ----------  /src/routes/  ----------------------------------
-    ----------  /route-jquery-page.js  -------------------------
-    ------------------------------------------------------------
+    *  ------------------------------------------------------------------------  *
+    *  -----  route-jquery-page.js  --  /src/routes/route-jquery-page.js  -----  *
+    *  ------------------------------------------------------------------------  *
 */
 
 
-import { Header } from '@components/layout/layout-header.js';
-import { Navbar } from '@components/layout/layout-navbar.js';
-import { Main } from '@components/layout/layout-main.js';
-import { Footer } from '@components/layout/layout-footer.js';
+import { LayoutHeader } from '@components/layout/layout-header.js';
+import { LayoutNavbar } from '@components/layout/layout-navbar.js';
+import { LayoutMain } from '@components/layout/layout-main.js';
+import { LayoutFooter } from '@components/layout/layout-footer.js';
 
 import layoutHeader from '@components/layout/layout-header.html?raw';
 import layoutNavbar from '@components/layout/layout-navbar.html?raw';
@@ -29,10 +27,10 @@ import { base } from '@/config/base.js';
 export const routeJqueryPage = {
     id: 'jqueryPage',
     components: {
-        layoutHeader: Header(layoutHeader),
-        layoutNavbar: Navbar(layoutNavbar),
-        layoutMain: Main(jqueryPage),
-        layoutFooter: Footer(layoutFooter),
+        layoutHeader: LayoutHeader(layoutHeader),
+        layoutNavbar: LayoutNavbar(layoutNavbar),
+        layoutMain: LayoutMain(jqueryPage),
+        layoutFooter: LayoutFooter(layoutFooter),
     },
     favicon: `${base}/favicon/jquery-icon.svg`,
     pageTitle: 'jQuery — The Write Less, Do More Library',

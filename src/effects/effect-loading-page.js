@@ -1,8 +1,9 @@
 /*
-    *  ------------------------------------------------------------------------------  *
-    *  -----  /effect-loading-page.js  --  /src/effects/effect-loading-page.js  -----  *
-    *  ------------------------------------------------------------------------------  *
+    *  -----------------------------------------------------------------------------  *
+    *  -----  effect-loading-page.js  --  /src/effects/effect-loading-page.js  -----  *
+    *  -----------------------------------------------------------------------------  *
 */
+
 
 /** @typedef {import('../types/spa-events-types.js').WaitForFirstSpaRouteLoadedOptions} WaitForFirstSpaRouteLoadedOptions */
 

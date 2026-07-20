@@ -1,10 +1,7 @@
 /*
-    *  -----------------------------------------------------------------------------  *
-    *  -----  /astro-page.esm.js  --  /src/scripts/js/pages/astro-page.esm.js  -----  *
-    *  -----------------------------------------------------------------------------  *
-    *
-    *  Script ESM (ES Modules) — Utilidades Astro exportadas como módulo nativo.
-    *  Renderiza contenido en astro-demo.html tras la carga del plugin SPA v3.
+    *  ----------------------------------------------------------------------------  *
+    *  -----  astro-page.esm.js  --  /src/scripts/js/pages/astro-page.esm.js  -----  *
+    *  ----------------------------------------------------------------------------  *
 */
 
 

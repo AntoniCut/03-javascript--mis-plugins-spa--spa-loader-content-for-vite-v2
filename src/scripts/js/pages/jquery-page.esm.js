@@ -1,8 +1,7 @@
 /*
-    *  -----  /jquery-page.esm.js  --  /src/scripts/js/pages/jquery-page.esm.js  -----
-    *
-    *  Script ESM (ES Modules) — Utilidades jQuery exportadas como módulo nativo.
-    *  Renderiza contenido en jquery-demo.html tras la carga del plugin SPA v3.
+    *  ------------------------------------------------------------------------------  *
+    *  -----  jquery-page.esm.js  --  /src/scripts/js/pages/jquery-page.esm.js  -----  *
+    *  ------------------------------------------------------------------------------  *
 */
 
 

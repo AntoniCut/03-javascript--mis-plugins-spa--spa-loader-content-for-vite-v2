@@ -1,8 +1,7 @@
 /*
-    *  -----  /react-page.esm.js  --  /src/scripts/js/pages/react-page.esm.js  -----
-    *
-    *  Script ESM (ES Modules) — Utilidades React exportadas como módulo nativo.
-    *  Renderiza contenido en react-demo.html tras la carga del plugin SPA v3.
+    *  ----------------------------------------------------------------------------  *
+    *  -----  react-page.esm.js  --  /src/scripts/js/pages/react-page.esm.js  -----  *
+    *  ----------------------------------------------------------------------------  *
 */
 
 

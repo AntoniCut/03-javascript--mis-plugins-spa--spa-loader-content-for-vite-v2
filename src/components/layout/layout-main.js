@@ -1,9 +1,7 @@
 /*
-    -------------------------------------------------
-    ----------  javascript.antonydev.tech  ----------
-    ----------  /src/components/layout/  ------------
-    ----------  /layout-main.js  --------------------
-    -------------------------------------------------
+    *  -----------------------------------------------------------------------  *
+    *  -----  layout-main.js  --  /src/components/layout/layout-main.js  -----  *
+    *  -----------------------------------------------------------------------  *
 */
 
 
@@ -13,7 +11,7 @@
  * @returns {() => void} - Función que renderiza el contenido en el Main
  */
 
-export const Main = (html = '') => {
+export const LayoutMain = (html = '') => {
 
     return () => {
 

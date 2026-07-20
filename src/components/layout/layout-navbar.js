@@ -1,13 +1,12 @@
 /*
-    -------------------------------------------------
-    ----------  javascript.antonydev.tech  ----------
-    ----------  /src/components/layout/  ------------
-    ----------  /layout-navbar.js  ------------------
-    -------------------------------------------------
+    *  ---------------------------------------------------------------------------  *
+    *  -----  layout-navbar.js  --  /src/components/layout/layout-navbar.js  -----  *
+    *  ---------------------------------------------------------------------------  *
 */
 
 
 import { bindNavbarMenu } from '@components/layout/bind-navbar-menu.js';
+import { resolveLayoutHtml } from '@components/layout/resolve-layout-html.js';
 
 
 /**
@@ -15,7 +14,7 @@ import { bindNavbarMenu } from '@components/layout/bind-navbar-menu.js';
  * @param {string} html - HTML a renderizar dentro del Navbar
  * @returns {() => void} - Función que renderiza el contenido en el Navbar
  */
-export const Navbar = (html = '') => {
+export const LayoutNavbar = (html = '') => {
 
     return () => {
 
@@ -28,7 +27,7 @@ export const Navbar = (html = '') => {
         if (!$layoutNavbar)
             throw new Error('No se encontró el elemento #layoutNavbar en el DOM.');
 
-        $layoutNavbar.innerHTML = html;
+        $layoutNavbar.innerHTML = resolveLayoutHtml(html);
 
         bindNavbarMenu();
     };

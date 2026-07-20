@@ -1,10 +1,11 @@
 /*
-    -------------------------------------------------
-    ----------  javascript.antonydev.tech  ----------
-    ----------  /src/components/layout/  ------------
-    ----------  /layout-footer.js  ------------------
-    -------------------------------------------------
+    *  ---------------------------------------------------------------------------  *
+    *  -----  layout-footer.js  --  /src/components/layout/layout-footer.js  -----  *
+    *  ---------------------------------------------------------------------------  *
 */
+
+
+import { resolveLayoutHtml } from '@components/layout/resolve-layout-html.js';
 
 
 /**
@@ -12,7 +13,7 @@
  * @param {string} html - HTML a renderizar dentro del Footer
  * @returns {() => void} - Función que renderiza el contenido en el Footer
  */
-export const Footer = (html = '') => {
+export const LayoutFooter = (html = '') => {
 
     return () => {
 
@@ -25,7 +26,7 @@ export const Footer = (html = '') => {
         if (!$layoutFooter)
             throw new Error('No se encontró el elemento #layoutFooter en el DOM.');
 
-        $layoutFooter.innerHTML = html;
+        $layoutFooter.innerHTML = resolveLayoutHtml(html);
     };
 
 };

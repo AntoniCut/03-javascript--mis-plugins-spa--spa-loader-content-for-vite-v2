@@ -1,8 +1,7 @@
 /*
-    *  -----  /home.esm.js  --  /src/scripts/js/pages/home.esm.js  -----
-    *
-    *  Script ESM (ES Modules) — Utilidades spa-loader-content-html exportadas como módulo nativo.
-    *  Renderiza contenido en home-demo.html tras la carga del plugin SPA v3.
+    *  ----------------------------------------------------------------  *
+    *  -----  home.esm.js  --  /src/scripts/js/pages/home.esm.js  -----  *
+    *  ----------------------------------------------------------------  *
 */
 
 

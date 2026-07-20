@@ -1,8 +1,7 @@
 /*
-    *  -----  /html-page.esm.js  --  /src/scripts/js/pages/html-page.esm.js  -----
-    *
-    *  Script ESM (ES Modules) — Utilidades HTML5 exportadas como módulo nativo.
-    *  Renderiza contenido en html-demo.html tras la carga del plugin SPA v3.
+    *  --------------------------------------------------------------------------  *
+    *  -----  html-page.esm.js  --  /src/scripts/js/pages/html-page.esm.js  -----  *
+    *  --------------------------------------------------------------------------  *
 */
 
 

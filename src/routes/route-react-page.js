@@ -1,16 +1,14 @@
 /*
-    ------------------------------------------------------------
-    ----------  /javascript.antonydev.tech/  -------------------
-    ----------  /src/routes/  ----------------------------------
-    ----------  /route-react-page.js  --------------------------
-    ------------------------------------------------------------
+    *  ----------------------------------------------------------------------  *
+    *  -----  route-react-page.js  --  /src/routes/route-react-page.js  -----  *
+    *  ----------------------------------------------------------------------  *
 */
 
 
-import { Header } from '@components/layout/layout-header.js';
-import { Navbar } from '@components/layout/layout-navbar.js';
-import { Main } from '@components/layout/layout-main.js';
-import { Footer } from '@components/layout/layout-footer.js';
+import { LayoutHeader } from '@components/layout/layout-header.js';
+import { LayoutNavbar } from '@components/layout/layout-navbar.js';
+import { LayoutMain } from '@components/layout/layout-main.js';
+import { LayoutFooter } from '@components/layout/layout-footer.js';
 
 import layoutHeader from '@components/layout/layout-header.html?raw';
 import layoutNavbar from '@components/layout/layout-navbar.html?raw';
@@ -29,10 +27,10 @@ import { base } from '@/config/base.js';
 export const routeReactPage = {
     id: 'reactPage',
     components: {
-        layoutHeader: Header(layoutHeader),
-        layoutNavbar: Navbar(layoutNavbar),
-        layoutMain: Main(reactPage),
-        layoutFooter: Footer(layoutFooter),
+        layoutHeader: LayoutHeader(layoutHeader),
+        layoutNavbar: LayoutNavbar(layoutNavbar),
+        layoutMain: LayoutMain(reactPage),
+        layoutFooter: LayoutFooter(layoutFooter),
     },
     favicon: `${base}/favicon/react-icon.svg`,
     pageTitle: 'React — Biblioteca UI Declarativa',

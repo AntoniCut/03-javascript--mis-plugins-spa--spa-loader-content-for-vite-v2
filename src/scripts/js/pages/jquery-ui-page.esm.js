@@ -1,8 +1,7 @@
 /*
-    *  -----  /jquery-ui-page.esm.js  --  /src/scripts/js/pages/jquery-ui-page.esm.js  -----
-    *
-    *  Script ESM (ES Modules) — Utilidades jQuery UI exportadas como módulo nativo.
-    *  Renderiza contenido en jquery-ui-demo.html tras la carga del plugin SPA v3.
+    *  ------------------------------------------------------------------------------------  *
+    *  -----  jquery-ui-page.esm.js  --  /src/scripts/js/pages/jquery-ui-page.esm.js  -----  *
+    *  ------------------------------------------------------------------------------------  *
 */
 
 

@@ -1,8 +1,7 @@
 /*
-    *  -----  /css-page.esm.js  --  /src/scripts/js/pages/css-page.esm.js  -----
-    *
-    *  Script ESM (ES Modules) — Utilidades CSS3 exportadas como módulo nativo.
-    *  Renderiza contenido en css-demo.html tras la carga del plugin SPA v3.
+    *  ------------------------------------------------------------------------  *
+    *  -----  css-page.esm.js  --  /src/scripts/js/pages/css-page.esm.js  -----  *
+    *  ------------------------------------------------------------------------  *
 */
 
 
