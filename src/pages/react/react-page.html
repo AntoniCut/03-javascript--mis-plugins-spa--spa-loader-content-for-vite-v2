@@ -1,0 +1,180 @@
+<!--
+    *  -----  /react-page.html  --  /src/pages/react/react-page.html  -----
+-->
+
+
+
+<div class="main__container">
+
+
+    <h2 class="main__title"> React — Biblioteca UI Declarativa </h2>
+
+    <div class="react-page">
+
+    <div class="react-page__hero">
+        <div class="react-page__hero-badge">
+            <span class="react-page__hero-tag" aria-hidden="true">⚛️</span>
+            <h3 class="react-page__hero-title">React</h3>
+            <p class="react-page__hero-subtitle">La librería más popular para construir interfaces</p>
+        </div>
+    </div>
+
+    <section class="react-page__intro">
+        <p class="react-page__intro-text">
+            <strong>React</strong> es una biblioteca de JavaScript de código abierto Developed by Meta
+            (anteriormente Facebook) para construir interfaces de usuario interactivas y declarativas.
+            Utiliza un DOM virtual para maximizar el rendimiento y permite crear componentes reutilizables.
+        </p>
+        <p class="react-page__intro-text">
+            <strong>React</strong> revolucionó el desarrollo web al introducir el concepto de componentes
+            funcionales y el hooks API, haciendo que el código sea más predecible, fácil de depurar y de probar.
+            Es la elección preferida de millones de desarrolladores worldwide.
+        </p>
+    </section>
+
+    <section class="react-page__features">
+
+        <h3 class="react-page__features-title">Características Principales</h3>
+
+        <div class="react-page__features-grid">
+
+            <article class="react-page__feature">
+                <span class="react-page__feature-icon" aria-hidden="true">🔄</span>
+                <h4 class="react-page__feature-title">DOM Virtual</h4>
+                <p class="react-page__feature-text">
+                    React mantiene una representación en memoria del DOM real, aplicando actualizaciones
+                    efficiently solo a los nodos que cambian, garantizando máxima performance.
+                </p>
+            </article>
+
+            <article class="react-page__feature">
+                <span class="react-page__feature-icon" aria-hidden="true">⚓</span>
+                <h4 class="react-page__feature-title">Hooks API</h4>
+                <p class="react-page__feature-text">
+                    Functions como <code>useState</code>, <code>useEffect</code> y <code>useContext</code>
+                    permiten gestionar estado y side effects en componentes funcionales.
+                </p>
+            </article>
+
+            <article class="react-page__feature">
+                <span class="react-page__feature-icon" aria-hidden="true">🧩</span>
+                <h4 class="react-page__feature-title">Componentes</h4>
+                <p class="react-page__feature-text">
+                    Construye piezas de UI independientes y reutilizables que pueden ser compuestas
+                    para crear aplicaciones complejas de forma modular.
+                </p>
+            </article>
+
+            <article class="react-page__feature">
+                <span class="react-page__feature-icon" aria-hidden="true">📦</span>
+                <h4 class="react-page__feature-title">JSX</h4>
+                <p class="react-page__feature-text">
+                    JSX permite escribir HTML dentro de JavaScript, haciendo el código más intuitivo
+                    y expresivo, compilando a llamadas eficientes de <code>React.createElement</code>.
+                </p>
+            </article>
+
+            <article class="react-page__feature">
+                <span class="react-page__feature-icon" aria-hidden="true">♿</span>
+                <h4 class="react-page__feature-title">Accesibilidad</h4>
+                <p class="react-page__feature-text">
+                    React incorpora prácticas de accesibilidad nativas y soporte para tecnologías
+                    asistivas, ayudando a crear aplicaciones para todos.
+                </p>
+            </article>
+
+            <article class="react-page__feature">
+                <span class="react-page__feature-icon" aria-hidden="true">🌐</span>
+                <h4 class="react-page__feature-title">Ecosistema</h4>
+                <p class="react-page__feature-text">
+                    React Router, Redux, Next.js y milhares de librerías conforman un ecosistema
+                    completo para cualquier necesidad de desarrollo web.
+                </p>
+            </article>
+
+        </div>
+    </section>
+
+    <section class="react-page__concepts-section">
+
+        <h3 class="react-page__concepts-title">Conceptos Esenciales</h3>
+
+        <ul class="react-page__concepts">
+            <li class="react-page__concept">Components</li>
+            <li class="react-page__concept">Props</li>
+            <li class="react-page__concept">State</li>
+            <li class="react-page__concept">Hooks</li>
+            <li class="react-page__concept">JSX</li>
+            <li class="react-page__concept">Virtual DOM</li>
+            <li class="react-page__concept">useState</li>
+            <li class="react-page__concept">useEffect</li>
+            <li class="react-page__concept">useContext</li>
+            <li class="react-page__concept">Custom Hooks</li>
+        </ul>
+
+    </section>
+
+</div>
+
+
+    <h2 class="main__title"> React — Demo Scripts </h2>
+
+    <div class="react-demo">
+
+
+    <div class="react-page__hero">
+        <div class="react-page__hero-badge">
+            <span class="react-page__hero-tag" aria-hidden="true">⚛</span>
+            <h3 class="react-page__hero-title">React</h3>
+            <p class="react-page__hero-subtitle">Demo de scripts SPA v3</p>
+        </div>
+    </div>
+
+
+    <section class="react-page__intro">
+        <p class="react-page__intro-text">
+            Esta sección forma parte de la vista cargada en <strong>layoutMain</strong>. Los scripts
+            de la ruta se ejecutan con <strong>applyRouteMeta</strong> del plugin
+            <strong>spa-loader-content-html v3</strong>, cuando el DOM de la página ya está disponible.
+        </p>
+    </section>
+
+
+    <section class="react-page__features" data-react-demo="cjs">
+
+        <h3 class="react-page__features-title">Demo Scripts CJS</h3>
+
+        <p class="react-page__intro-text" data-react-demo-status="cjs">
+            Esperando <code>react-page.cjs.js</code>…
+        </p>
+
+        <div class="react-page__features-grid" data-react-demo-target="cjs"></div>
+
+    </section>
+
+
+    <section class="react-page__features" data-react-demo="esm">
+
+        <h3 class="react-page__features-title">Demo Scripts ESM</h3>
+
+        <p class="react-page__intro-text" data-react-demo-status="esm">
+            Esperando <code>react-page.esm.js</code>…
+        </p>
+
+        <div class="react-page__features-grid" data-react-demo-target="esm"></div>
+
+    </section>
+
+
+    <section class="react-page__concepts-section">
+
+        <h3 class="react-page__concepts-title">Hooks React renderizados por ESM</h3>
+
+        <ul class="react-page__concepts" data-react-demo-target="tags"></ul>
+
+    </section>
+
+</div>
+
+
+</div>

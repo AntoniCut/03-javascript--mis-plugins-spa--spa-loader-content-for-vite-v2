@@ -2,19 +2,19 @@
     -------------------------------------------------
     ----------  javascript.antonydev.tech  ----------
     ----------  /src/components/layout/  ------------
-    ----------  /layout-header-jquery-page.js  ------
+    ----------  /layout-header-astro-page.js  -------
     -------------------------------------------------
 */
 
 
-import jqueryLogo from '@assets/logos/jquery.svg';
+import astroLogo from '@assets/logos/astro.svg';
 import javascriptLogo from '@assets/logos/javascript.svg';
 
 
 /**
- * - Componente `Header para la página jQuery`
+ * - Componente `Header para la página Astro`
  */
-export const HeaderJqueryPage = () => {
+export const HeaderAstroPage = () => {
 
     const $layoutHeader = document.querySelector('#layoutHeader');
 
@@ -25,11 +25,11 @@ export const HeaderJqueryPage = () => {
 
         <div class="header__container">
 
-            <a href="https://jquery.com/" target="_blank" rel="noreferrer">
-                <img src="${jqueryLogo}" class="logo" alt="jQuery logo"/>
+            <a href="https://astro.build/" target="_blank" rel="noreferrer">
+                <img src="${astroLogo}" class="logo" alt="Astro logo"/>
             </a>
 
-            <h1 id="headerTitle"> jQuery — The Write Less, Do More Library </h1>
+            <h1 id="headerTitle"> Astro — Framework de Sitios Estáticos </h1>
 
             <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer">
                 <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo"/>

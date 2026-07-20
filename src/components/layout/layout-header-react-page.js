@@ -2,19 +2,19 @@
     -------------------------------------------------
     ----------  javascript.antonydev.tech  ----------
     ----------  /src/components/layout/  ------------
-    ----------  /layout-header-jquery-page.js  ------
+    ----------  /layout-header-react-page.js  -------
     -------------------------------------------------
 */
 
 
-import jqueryLogo from '@assets/logos/jquery.svg';
+import reactLogo from '@assets/logos/react.svg';
 import javascriptLogo from '@assets/logos/javascript.svg';
 
 
 /**
- * - Componente `Header para la página jQuery`
+ * - Componente `Header para la página React`
  */
-export const HeaderJqueryPage = () => {
+export const HeaderReactPage = () => {
 
     const $layoutHeader = document.querySelector('#layoutHeader');
 
@@ -25,11 +25,11 @@ export const HeaderJqueryPage = () => {
 
         <div class="header__container">
 
-            <a href="https://jquery.com/" target="_blank" rel="noreferrer">
-                <img src="${jqueryLogo}" class="logo" alt="jQuery logo"/>
+            <a href="https://react.dev/" target="_blank" rel="noreferrer">
+                <img src="${reactLogo}" class="logo" alt="React logo"/>
             </a>
 
-            <h1 id="headerTitle"> jQuery — The Write Less, Do More Library </h1>
+            <h1 id="headerTitle"> React — Biblioteca UI Declarativa </h1>
 
             <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer">
                 <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo"/>

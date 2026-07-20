@@ -16,7 +16,10 @@ import { Footer } from '@components/layout/layout-footer.js';
 
 // -----  Importa las páginas  -----
 import home from '@pages/home.html?raw';
-import homeRouteStyles from '@styles/routes/home.css?url';
+import homeRouteStyles from '@styles/scss/pages/home.scss?url';
+
+//  -----  Scripts ESM  -----
+import { mount as mountHome } from '@scripts/js/pages/home.esm.js';
 
 //  -----  Importa la base del proyecto  -----
 import { base } from '@/config/base.js';
@@ -33,9 +36,9 @@ export const route00Home = {
     LayoutMainComponent: Main(home),
     LayoutFooterComponent: Footer,
     favicon: `${base}/favicon/javascript.svg`,
-    pageTitle: 'Mi plugin "Spa Loader Content for Vite" - Version 2',
+    pageTitle: 'spa-loader-content-for-vite — Plugin SPA v2',
     path: '/',
-    headerTitle: 'Mi plugin "Spa Loader Content for Vite" - Version 2',
+    headerTitle: 'spa-loader-content-for-vite — Plugin SPA v2',
     styles: homeRouteStyles,
-    scripts: []
+    scripts: [mountHome]
 };

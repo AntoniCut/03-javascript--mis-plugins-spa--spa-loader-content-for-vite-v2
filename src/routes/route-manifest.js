@@ -22,53 +22,55 @@ export const routeManifest = [
         file: 'route-00-home' 
     },
 
-    //  ----------  01 - Curso JavaScript Jon Mircha  ----------
-    { 
-        id: 'cursoJavascriptJonMircha', 
-        path: 'curso-javascript-jon-mircha', 
-        file: 'route-01-curso-javascript-jon-mircha' 
+    //  ----------  Páginas de Contenido (HTML / CSS / JavaScript)  ----------
+    {
+        id: 'htmlPage',
+        path: 'html-page',
+        file: 'route-html-page'
     },
 
-    //  ----------  02 - Implements Scripts  ----------
-    { 
-        id: 'implementsScripts', 
-        path: 'implements-scripts', 
-        file: 'route-02-implements-scripts' 
+    {
+        id: 'cssPage',
+        path: 'css-page',
+        file: 'route-css-page'
     },
 
-    //  ----------  03 - HTML Page  ----------
-    { 
-        id: 'htmlPage', 
-        path: 'html-page', 
-        file: 'route-03-html-page' 
+    {
+        id: 'javascriptPage',
+        path: 'javascript-page',
+        file: 'route-javascript-page'
     },
 
-    //  ----------  04 - CSS Page  ----------
-    { 
-        id: 'cssPage', 
-        path: 'css-page', 
-        file: 'route-04-css-page' 
+    {
+        id: 'jqueryPage',
+        path: 'jquery-page',
+        file: 'route-jquery-page'
     },
 
-    //  ----------  05 - JavaScript Page  ----------
-    { 
-        id: 'javascriptPage', 
-        path: 'javascript-page', 
-        file: 'route-05-javascript-page' 
+    {
+        id: 'jqueryUiPage',
+        path: 'jquery-ui-page',
+        file: 'route-jquery-ui-page'
     },
 
-    //  ----------  06 - jQuery Page  ----------
-    { 
-        id: 'jqueryPage', 
-        path: 'jquery-page', 
-        file: 'route-06-jquery-page' 
+    //  ----------  Frameworks (React / Astro)  ----------
+    {
+        id: 'reactPage',
+        path: 'react-page',
+        file: 'route-react-page'
     },
 
-    //  ----------  07 - jQuery UI Page  ----------
+    {
+        id: 'astroPage',
+        path: 'astro-page',
+        file: 'route-astro-page'
+    },
+
+    //  ----------  404 - Not Found  ----------
     { 
-        id: 'jqueryUiPage', 
-        path: 'jquery-ui-page', 
-        file: 'route-07-jquery-ui-page' 
+        id: '404NotFoundPage', 
+        path: '404-not-found-page', 
+        file: 'route-404-not-found-page' 
     },
 
 ];
